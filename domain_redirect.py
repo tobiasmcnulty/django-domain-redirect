@@ -1,22 +1,35 @@
-from django.http import HttpResponse
-from django.conf.urls import url
+import os
+import random
+import string
+from urllib.parse import urlunsplit
 
-DEBUG = True
-ROOT_URLCONF = 'pico_django'
+from django.conf.urls import url
+from django.http import HttpResponseRedirect
+
+DEBUG = False
+ROOT_URLCONF = 'domain_redirect'
 DATABASES = {'default': {}}
 
 
-def index(request, name):
-    return HttpResponse('Hello {name}!'.format(name=(name or 'World')))
+def index(request):
+    return HttpResponseRedirect(urlunsplit([
+        REDIRECT_SCHEME,
+        REDIRECT_NETLOC,
+        request.get_full_path(),
+        '',
+        '',
+    ]))
+
 
 urlpatterns = [
-    url(r'^(?P<name>\w+)?$', index)
+    url(r'^.*$', index),  # match all URLs
 ]
 
-SECRET_KEY = "not so secret"
+SECRET_KEY = ''.join([
+    random.SystemRandom().choice(string.printable)
+    for i in range(50)
+])
 
-# run with djagno dev server
-# $ PYTHONPATH=. django-admin.py runserver 0.0.0.0:8000 --settings=pico_django
-
-# for example run with uwsgi
-# `$ uwsgi --http :8000 -M --pythonpath=. --env DJANGO_SETTINGS_MODULE=pico_django -w "django.core.handlers.wsgi:WSGIHandler()"`
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(';')
+REDIRECT_SCHEME = os.getenv('REDIRECT_SCHEME', 'http')
+REDIRECT_NETLOC = os.getenv('REDIRECT_NETLOC', 'example.com')
