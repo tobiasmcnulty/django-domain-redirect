@@ -1,42 +1,41 @@
-Mini_django.py
-==============
+django-domain-redirect
+======================
 
-An entire django app in a single file. Updated from [here](http://olifante.blogs.com/covil/2010/04/minimal-django.html) to use Django trunk.
+A very simple Django app to redirect all requests to a new domain, based on https://github.com/readevalprint/mini-django.
 
-pico
-====
-This started off to see what the absolutely smallest requirements needed to run a Django project. Run the [pico_django.py](https://github.com/readevalprint/mini-django/blob/master/pico_django.py) with `$ PYTHONPATH=. django-admin.py runserver 0.0.0.0:8000 --settings=pico_django` and go to http://localhost:8000
+You can run it like so:
 
-Or with uwsgi in production:
+    $ gunicorn "django.core.handlers.wsgi:WSGIHandler()" \
+      --env DJANGO_SETTINGS_MODULE=domain_redirect \
+      --log-file - --access-logfile -
 
-    $ uwsgi --http :8000 -M --pythonpath=. \
-    --env DJANGO_SETTINGS_MODULE=pico_django \
-    -w "django.core.handlers.wsgi:WSGIHandler()"
+This will redirect all requests to for http://localhost:8000 to http://example.com
 
-mini
-====
-Soon pico needed a little more spice, so it got some template loading and then because I'm lazy I made the new version directly runnable.
+To configure the domain and scheme used for the redirect, set the `REDIRECT_NETLOC` and `REDIRECT_SCHEME` environment
+variables, e.g.:
 
-Run the [mini_django.py](https://github.com/readevalprint/mini-django/blob/master/mini_django.py) with `$ python ./mini_django.py runserver 0.0.0.0:8000` and go to http://localhost:8000/Foo
+    $ gunicorn "django.core.handlers.wsgi:WSGIHandler()" \
+      --env DJANGO_SETTINGS_MODULE=domain_redirect \
+      --env REDIRECT_NETLOC=www.mydomain.com \
+      --env REDIRECT_SCHEME=https \
+      --log-file - --access-logfile -
+
 
 Dependencies
-===========
+============
 * python
 * django
+* gunicorn
+
 
 Install
-======
+=======
 1. Clone this repo
 2. `pip install requirements.txt`
-3. Run
-    1. `python ./mini_django.py runserver 0.0.0.0:8000`
-    2. `PYTHONPATH=. django-admin.py runserver 0.0.0.0:8000 --settings=pico_django`
+3. `PYTHONPATH=. django-admin.py runserver 0.0.0.0:8000 --settings=domain_redirect`
 
 
-License
-=======
-As-is. Public Domain. Don't blame me.
-
-Author
+Authors
 ======
 Tim Watts (tim@readevalprint.com)
+Tobias McNulty (tobias@caktusgroup.com)
