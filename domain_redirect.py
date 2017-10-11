@@ -1,7 +1,11 @@
 import os
 import random
 import string
-from urllib.parse import urlunsplit
+try:
+    from urllib.parse import urlunsplit
+except ImportError:
+    # retain Python 2.7 compatibility
+    from urlparse import urlunsplit
 
 from django.conf.urls import url
 from django.http import HttpResponseRedirect
