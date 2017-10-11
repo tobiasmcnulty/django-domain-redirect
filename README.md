@@ -37,5 +37,5 @@ Install
 
 Authors
 ======
-Tim Watts (tim@readevalprint.com)
-Tobias McNulty (tobias@caktusgroup.com)
+* Tim Watts (tim@readevalprint.com)
+* Tobias McNulty (tobias@caktusgroup.com)
